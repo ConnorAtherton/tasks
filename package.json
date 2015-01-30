@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/ConnorAtherton/tasks",
   "dependencies": {
-    "headway": "^0.1.0",
+    "headway": "^0.3.0",
     "minimist": "^1.1.0"
   }
 }

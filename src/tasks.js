@@ -2,55 +2,36 @@ var fs = require('fs');
 var path = require("path");
 var hw = require('headway');
 
-/**
- *
- *
- *
- */
 function getTaskPath() {
   return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + '/tasks.json';
 }
 
-/**
- *
- *
- *
- */
 function readTaskFile() {
   var path = getTaskPath();
 
-  if (!fs.exists(path)) {
-    // we need to create it..
+  try {
+    return fs.readFileSync(path);
+  } catch(e) {
     var start = JSON.stringify({});
     fs.writeFileSync(path, start);
+    return fs.readFileSync(path);
   }
-
-  return fs.readFileSync(path);
-}
-
-function addTask(task) {
-  var taskObj = {
-    title: task,
-    completed: false
-  }
-
-  var tasks = readTaskFile();
-  console.log(tasks);
 }
 
 function getDate() {
   return (new Date()).toString().split(" ").slice(1, 4).join(" ");
 }
 
-function addAliases(argv) {
-  var newArgv;
-  var aliases = {
-    "add": "a",
-    "complete": "c"
+function addAliases(cmds) {
+  for (var cmd in cmds) {
+    if (cmds.hasOwnProperty(cmd)) {
+      var key = cmd[0];
+      cmds[key] = cmds[cmd];
+    }
   }
 
   // assign just commands
-  return argv;
+  return cmds;
 }
 
 function listTasks() {
@@ -58,15 +39,15 @@ function listTasks() {
   var date = getDate();
   var taskString;
 
-  console.log(tasks);
   if (!tasks[date]) return hw.log("#{yellow} No tasks set up for today");
 
   var taskString = tasks[date].reduce(function(tasks, task, i) {
-    var tmp = tasks + "\t{green}" + i + "){/}  {yellow}"
-    tmp = task.complete ? tmp + task.title + "{green} (COMPLETE)": tmp + task.title;
-  }, "");
+    var tmp = tasks + "\n\t{green}" + (i + 1) + "){/}  {yellow}";
+    tmp = task.complete ? tmp + task.title + "{green}{strikethrough} (COMPLETE)": tmp + task.title;
+    return tmp;
+  }, "\n\tHere are todays tasks\n");
 
-  hw.log(taskString);
+  hw.log(taskString + '\n');
 }
 
 function addTask(task) {
@@ -83,21 +64,59 @@ function addTask(task) {
   }
 
   tasks[today].push(taskObj);
-  console.log(tasks, path);
-  fs.writeFileSync(path, "re");
-  // fs.writeFileSync(path, JSON.stringify(tasks));
+  fs.writeFile(path, JSON.stringify(tasks), function(err) {
+    if (err) return hw.log("{red}Error writing task file");
 
-  hw.log('{yellow} Task added.');
-  return listTasks();
+    // hw.log('# {yellow} Task added.\n');
+    return listTasks();
+  });
 }
 
-function deleteTask(taskId) {
+function changeTaskStatus(taskId, status) {
+  var tasks = JSON.parse(readTaskFile());
+  var today = getDate();
+  var path = getTaskPath();
 
+  if (!tasks[today] || tasks[today].length < taskId)
+    return hw.log('# {red}Invalid task id');
+
+  tasks[today][taskId - 1].complete = status;
+  fs.writeFile(path, JSON.stringify(tasks), function(err) {
+    listTasks();
+
+    var todo = tasks[today].filter(function(task) {
+      if (!task.complete) return task;
+    });
+
+   if (todo.length === 0) hw.log('\tAll tasks complete. {_cyan_}{red}{_underline}Yay\n');
+  });
+}
+
+function listDoc() {
+  var doc = fs.readFileSync(path.resolve(__dirname, '..', 'doc/help.txt'));
+      hw.log(doc.toString());
 }
 
 module.exports = function(argv) {
-  argv = addAliases(argv);
-  console.log(argv, listTasks());
-  if (argv.add) return addTask(argv.add);
-  if (argv.complete) return completeTask(argv.c);
+  var cmds = {
+    add: [addTask, []],
+    complete: [changeTaskStatus, [true]],
+    uncomplete: [changeTaskStatus, [false]],
+    list: [listTasks],
+    help: [listDoc]
+  }
+  cmds = addAliases(cmds);
+
+  var args = argv._.slice(1);
+  var cmd = argv._[0];
+
+  if (!!cmds[cmd]) {
+    if (cmds[cmd].length > 1) {
+      cmds[cmd][1].unshift(args);
+    }
+
+    cmds[cmd][0].apply(this, cmds[cmd][1]);
+  } else {
+    cmds.list[0]();
+  }
 }

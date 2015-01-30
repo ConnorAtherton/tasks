@@ -1,0 +1,15 @@
+Usage: tasks [command] [options]
+
+Description:
+
+    A small cli for managing tasks in the terminal.
+
+Commands:
+
+    {green}${/} {_bold}[a]{/}dd [name]                Add a new task
+    {green}${/} {_bold}[c]{/}omplete [task_id]        Mark a task as completed
+    {green}${/} {_bold}[u]{/}ncomplete [task_id]      Mark a task as incomplete
+
+Options:
+
+    None.
