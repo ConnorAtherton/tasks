@@ -1,5 +1,5 @@
 {
-  "name": "task",
+  "name": "tasc",
   "version": "0.2.0",
   "description": "My small terminal task manager",
   "main": "bin/task.js",
