@@ -1,0 +1,30 @@
+{
+  "name": "task",
+  "version": "0.1.0",
+  "description": "My small terminal task manager",
+  "main": "bin/task.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "bin": {
+    "tasks": "bin/tasks.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ConnorAtherton/tasks"
+  },
+  "keywords": [
+    "tasks",
+    "productivity"
+  ],
+  "author": "Connor Atherton",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ConnorAtherton/tasks/issues"
+  },
+  "homepage": "https://github.com/ConnorAtherton/tasks",
+  "dependencies": {
+    "headway": "^0.1.0",
+    "minimist": "^1.1.0"
+  }
+}
