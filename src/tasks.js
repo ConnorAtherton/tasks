@@ -42,8 +42,8 @@ function listTasks() {
   if (!tasks[date]) return hw.log("#{yellow} No tasks set up for today");
 
   var taskString = tasks[date].reduce(function(tasks, task, i) {
-    var tmp = tasks + "\n\t{green}" + (i + 1) + "){/}  {yellow}";
-    tmp = task.complete ? tmp + task.title + "{green}{strikethrough} (COMPLETE)": tmp + task.title;
+    var tmp = tasks + "\n\t{green}[" + (i + 1) + "]{/} ";
+    tmp = task.complete ? tmp + "{green}✓{/} " + task.title : tmp + "{red}✖{/} " + task.title;
     return tmp;
   }, "\n\tHere are todays tasks\n");
 

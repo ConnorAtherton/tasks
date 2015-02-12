@@ -1,0 +1,4 @@
+- Read settings from a .taskrc file
+- Support subtasks
+- Support multiple formatters (simple, pretty, ascii etc)
+- edit a task
