@@ -1,3 +1,4 @@
+
 Usage: tasks [command] [options]
 
 Description:
@@ -6,9 +7,10 @@ Description:
 
 Commands:
 
-    {green}${/} {_bold}[a]{/}dd [name]                Add a new task
-    {green}${/} {_bold}[c]{/}omplete [task_id]        Mark a task as completed
-    {green}${/} {_bold}[u]{/}ncomplete [task_id]      Mark a task as incomplete
+    {green}${/} {_bold}[a]{/}dd [name]               Add a new task
+    {green}${/} {_bold}[d]{/}elete [name]            Deletes a task
+    {green}${/} {_bold}[c]{/}omplete [taskId]        Mark a task as completed
+    {green}${/} {_bold}[u]{/}ncomplete [taskId]      Mark a task as incomplete
 
 Options:
 

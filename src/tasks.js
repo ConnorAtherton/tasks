@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require("path");
 var hw = require('headway');
+var reporter = require('./reporters/pretty');
 
 function getTaskPath() {
   return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + '/tasks.json';
@@ -39,11 +40,11 @@ function listTasks() {
   var date = getDate();
   var taskString;
 
-  if (!tasks[date]) return hw.log("#{yellow} No tasks set up for today");
+  if (!tasks[date]) return reporter.noTasks();
 
-  var taskString = tasks[date].reduce(function(tasks, task, i) {
-    var tmp = tasks + "\n\t{green}[" + (i + 1) + "]{/} ";
-    tmp = task.complete ? tmp + "{green}✓{/} " + task.title : tmp + "{red}✖{/} " + task.title;
+  var taskString = tasks[date].reduce(function(taskTmpString, task, i) {
+    var tmp = taskTmpString + reporter.taskNumber(i + 1, task);
+    tmp = task.complete ? tmp + reporter.complete(task) : tmp + reporter.incomplete(task);
     return tmp;
   }, "\n\tHere are todays tasks\n");
 
@@ -65,43 +66,62 @@ function addTask(task) {
 
   tasks[today].push(taskObj);
   fs.writeFile(path, JSON.stringify(tasks), function(err) {
-    if (err) return hw.log("{red}Error writing task file");
+    if (err) return reporter.errorWritingFile();
 
-    // hw.log('# {yellow} Task added.\n');
     return listTasks();
   });
 }
 
-function changeTaskStatus(taskId, status) {
+function deleteTask(taskId) {
   var tasks = JSON.parse(readTaskFile());
   var today = getDate();
   var path = getTaskPath();
 
   if (!tasks[today] || tasks[today].length < taskId)
-    return hw.log('# {red}Invalid task id');
+    return reporter.invalidTask(taskId);
 
-  tasks[today][taskId - 1].complete = status;
+  tasks[today].splice(taskId - 1, 1)
+
   fs.writeFile(path, JSON.stringify(tasks), function(err) {
+    if (err) return reporter.errorWritingFile();
+
+    return listTasks();
+  });
+}
+
+function changeTaskStatus(taskId, key, status) {
+  var tasks = JSON.parse(readTaskFile());
+  var today = getDate();
+  var path = getTaskPath();
+
+  if (!tasks[today] || tasks[today].length < taskId)
+    return reporter.invalidTask(taskId);
+
+  tasks[today][taskId - 1][key] = status;
+  fs.writeFile(path, JSON.stringify(tasks), function(err) {
+    if (err) return reporter.errorWritingFile();
+
     listTasks();
 
     var todo = tasks[today].filter(function(task) {
-      if (!task.complete) return task;
+      if (!task.complete || !task.deleted) return task;
     });
 
-   if (todo.length === 0) hw.log('\tAll tasks complete. {_cyan_}{red}{_underline}Yay\n');
+   if (todo.length === 0) reporter.tasksComplete();
   });
 }
 
 function listDoc() {
   var doc = fs.readFileSync(path.resolve(__dirname, '..', 'doc/help.txt'));
-      hw.log(doc.toString());
+  hw.log(doc.toString());
 }
 
 module.exports = function(argv) {
   var cmds = {
     add: [addTask, []],
-    complete: [changeTaskStatus, [true]],
-    uncomplete: [changeTaskStatus, [false]],
+    "delete": [deleteTask, []],
+    complete: [changeTaskStatus, ["complete", true]],
+    uncomplete: [changeTaskStatus, ["complete", false]],
     list: [listTasks],
     help: [listDoc]
   }
