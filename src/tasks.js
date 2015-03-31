@@ -1,7 +1,16 @@
 var fs = require('fs');
 var path = require("path");
 var hw = require('headway');
+var is = require('is');
 var reporter = require('./reporters/pretty');
+
+// TODO: ability to attach notes to a task
+// TODO: enable carryon mode in .taskrc where
+//       yesterdays tasks are carried forward to today
+// TODO: Split task object away into it's own file
+//       so we can just do tasks.list.. etc
+// TODO: Created a new notes object. Comment above applies.
+// TODO: Add generic methods in reporter. Error, notication, success.
 
 function getTaskPath() {
   return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + '/tasks.json';
@@ -42,7 +51,7 @@ function listTasks() {
 
   if (!tasks[date]) return reporter.noTasks();
 
-  var taskString = tasks[date].reduce(function(taskTmpString, task, i) {
+  taskString = tasks[date].reduce(function(taskTmpString, task, i) {
     var tmp = taskTmpString + reporter.taskNumber(i + 1, task);
     tmp = task.complete ? tmp + reporter.complete(task) : tmp + reporter.incomplete(task);
     return tmp;
@@ -52,27 +61,31 @@ function listTasks() {
 }
 
 function addTask(task) {
+  if (is.undef(task) || is.empty(task))
+    return reporter.error("You can't add empty tasks");
+
   var tasks = JSON.parse(readTaskFile());
   var today = getDate();
   var path = getTaskPath();
   var taskObj = {
     title: task,
     complete: false
-  }
+  };
 
-  if (!Array.isArray(tasks[today])) {
+  if (!Array.isArray(tasks[today]))
     tasks[today] = [];
-  }
 
   tasks[today].push(taskObj);
+
   fs.writeFile(path, JSON.stringify(tasks), function(err) {
-    if (err) return reporter.errorWritingFile();
+    if (err) return reporter.error('Error writing tasks.json file');
 
     return listTasks();
   });
 }
 
 function deleteTask(taskId) {
+  console.log(arguments);
   var tasks = JSON.parse(readTaskFile());
   var today = getDate();
   var path = getTaskPath();
@@ -80,10 +93,10 @@ function deleteTask(taskId) {
   if (!tasks[today] || tasks[today].length < taskId)
     return reporter.invalidTask(taskId);
 
-  tasks[today].splice(taskId - 1, 1)
+  tasks[today].splice(taskId - 1, 1);
 
   fs.writeFile(path, JSON.stringify(tasks), function(err) {
-    if (err) return reporter.errorWritingFile();
+    if (err) return reporter.error('Error writing tasks.json file');
 
     return listTasks();
   });
@@ -98,8 +111,9 @@ function changeTaskStatus(taskId, key, status) {
     return reporter.invalidTask(taskId);
 
   tasks[today][taskId - 1][key] = status;
+
   fs.writeFile(path, JSON.stringify(tasks), function(err) {
-    if (err) return reporter.errorWritingFile();
+    if (err) return reporter.error('Error writing tasks.json file');
 
     listTasks();
 
@@ -124,19 +138,22 @@ module.exports = function(argv) {
     uncomplete: [changeTaskStatus, ["complete", false]],
     list: [listTasks],
     help: [listDoc]
-  }
+  };
+
   cmds = addAliases(cmds);
 
   var args = argv._.slice(1);
   var cmd = argv._[0];
 
   if (!!cmds[cmd]) {
-    if (cmds[cmd].length > 1) {
-      cmds[cmd][1].unshift(args);
+    var action = cmds[cmd];
+
+    if (action.length > 1) {
+      action[1] = args.concat(action[1]);
     }
 
-    cmds[cmd][0].apply(this, cmds[cmd][1]);
+    action[0].apply(this, action[1]);
   } else {
     cmds.list[0]();
   }
-}
+};

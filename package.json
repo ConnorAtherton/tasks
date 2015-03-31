@@ -26,5 +26,8 @@
   "dependencies": {
     "headway": "^0.3.0",
     "minimist": "^1.1.0"
+  },
+  "devDependencies": {
+    "is": "^3.0.1"
   }
 }

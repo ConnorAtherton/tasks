@@ -12,6 +12,3 @@ Commands:
     {green}${/} {_bold}[c]{/}omplete [taskId]        Mark a task as completed
     {green}${/} {_bold}[u]{/}ncomplete [taskId]      Mark a task as incomplete
 
-Options:
-
-    None.
