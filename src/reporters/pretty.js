@@ -31,5 +31,5 @@ module.exports = {
   incomplete: function(task) {
     return "{red}✖{/} " + task.title;
   }
-}
+};
 

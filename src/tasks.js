@@ -85,7 +85,9 @@ function addTask(task) {
 }
 
 function deleteTask(taskId) {
-  console.log(arguments);
+  if (!is.number(taskId))
+    return reporter.error("You need to pass a valid task number");
+
   var tasks = JSON.parse(readTaskFile());
   var today = getDate();
   var path = getTaskPath();
@@ -103,6 +105,9 @@ function deleteTask(taskId) {
 }
 
 function changeTaskStatus(taskId, key, status) {
+  if (!is.number(taskId))
+    return reporter.error("You need to pass a valid task number");
+
   var tasks = JSON.parse(readTaskFile());
   var today = getDate();
   var path = getTaskPath();

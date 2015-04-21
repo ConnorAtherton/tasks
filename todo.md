@@ -1,5 +1,8 @@
 #TODOS
 
+##README.md
+-: add some docs.
+
 ##src/tasks.js
 -: ability to attach notes to a task
 -: enable carryon mode in .taskrc where
