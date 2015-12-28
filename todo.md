@@ -9,3 +9,4 @@
 -: Split task object away into it's own file
 -: Created a new notes object. Comment above applies.
 -: Add generic methods in reporter. Error, notication, success.
+- clear the screen before printing any tasks/notes etc

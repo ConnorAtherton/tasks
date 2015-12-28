@@ -1,4 +1,4 @@
-# tasks
-A small terminal task manager
+# Tasks
 
-# TODO: add some docs.
+A personal task manager
+

@@ -11,6 +11,7 @@ var reporter = require('./reporters/pretty');
 //       so we can just do tasks.list.. etc
 // TODO: Created a new notes object. Comment above applies.
 // TODO: Add generic methods in reporter. Error, notication, success.
+// TODO clear the screen before printing any tasks/notes etc
 
 function getTaskPath() {
   return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + '/tasks.json';

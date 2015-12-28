@@ -1,14 +1,16 @@
+import hw from 'headway'
+
 module.exports = {
   tasksComplete: function() {
-    hw.log('\tAll tasks complete. Yay\n');
+    hw.log('\tAll tasks complete. Yay\n')
   },
 
   error: function(msg) {
-    hw.log(msg);
+    hw.log(msg)
   },
 
   noTasks: function() {
-    hw.log("No tasks set up for today");
+    hw.log('No tasks set up for today')
   },
 
 
@@ -18,16 +20,16 @@ module.exports = {
    *
    */
 
-  taskNumber: function(number, task) {
-    return "\n\t[" + number + "] ";
+  taskNumber: function(number) {
+    return `\n\t[${number}]`
   },
 
   complete: function(task) {
-    return task.title;
+    return task.title
   },
 
   incomplete: function(task) {
-    return task.title;
+    return task.title
   }
-};
+}
 

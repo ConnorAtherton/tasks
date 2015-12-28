@@ -1,16 +1,16 @@
-var hw = require('headway');
+import hw from 'headway'
 
 module.exports = {
   tasksComplete: function() {
-    hw.log('\tAll tasks complete. {_cyan_}{red}{_underline}Yay\n');
+    hw.log('\tAll tasks complete. {_cyan_}{red}{_underline}Yay\n')
   },
 
   error: function(msg) {
-    hw.log("{red}" + msg);
+    hw.log(`{red}${msg}`)
   },
 
   noTasks: function() {
-    hw.log("{yellow} No tasks set up for today");
+    hw.log('{yellow} No tasks set up for today')
   },
 
 
@@ -20,16 +20,16 @@ module.exports = {
    *
    */
 
-  taskNumber: function(number, task) {
-    return "\n\t{green}[" + number + "]{/} ";
+  taskNumber: function(number) {
+    return `\n\t{green}[${number}]{/}`
   },
 
   complete: function(task) {
-    return "{green}✓{/} " + task.title;
+    return `{green}✓{/} ${task.title}`
   },
 
   incomplete: function(task) {
-    return "{red}✖{/} " + task.title;
+    return `{red}✖{/} ${task.title}`
   }
-};
+}
 
