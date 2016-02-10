@@ -1,11 +1,11 @@
 
-Usage: tasks [command] [options]
+{_bold}Usage{/}: tasks [command] [options]
 
-Description:
+{_bold}Description{/}:
 
     A small cli for managing tasks in the terminal.
 
-Commands:
+{_bold}Commands{/}:
 
     {green}${/} {_bold}[a]{/}dd [name]               Add a new task
     {green}${/} {_bold}[d]{/}elete [name]            Deletes a task

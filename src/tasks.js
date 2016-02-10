@@ -12,9 +12,10 @@ var reporter = require('./reporters/pretty');
 // TODO: Created a new notes object. Comment above applies.
 // TODO: Add generic methods in reporter. Error, notication, success.
 // TODO clear the screen before printing any tasks/notes etc
+// TODO Add limits to tasks per day
 
 function getTaskPath() {
-  return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + '/tasks.json';
+  return process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'] + '/tasks.json';
 }
 
 function readTaskFile() {
@@ -55,8 +56,8 @@ function listTasks() {
   taskString = tasks[date].reduce(function(taskTmpString, task, i) {
     var tmp = taskTmpString + reporter.taskNumber(i + 1, task);
     tmp = task.complete ? tmp + reporter.complete(task) : tmp + reporter.incomplete(task);
-    return tmp;
-  }, "\n\tHere are todays tasks\n");
+    return tmp
+  }, reporter.intro());
 
   hw.log(taskString + '\n');
 }

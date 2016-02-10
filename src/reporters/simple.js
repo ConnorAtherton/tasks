@@ -1,35 +1,32 @@
-import hw from 'headway'
+var hw = require('headway')
 
 module.exports = {
+  intro: function() {
+    return hw.log('Here are your tasks for today')
+  },
+
   tasksComplete: function() {
-    hw.log('\tAll tasks complete. Yay\n')
+    return hw.log('All tasks complete. Yay')
   },
 
   error: function(msg) {
-    hw.log(msg)
+    return hw.log(msg)
   },
 
   noTasks: function() {
-    hw.log('No tasks set up for today')
+    return hw.log('No tasks set up for today')
   },
 
-
-  /**
-   * These don't print anything, they just retrn a formatted string for
-   * when all tasks are printed at once.
-   *
-   */
-
   taskNumber: function(number) {
-    return `\n\t[${number}]`
+    return `\n[${number}] `
   },
 
   complete: function(task) {
-    return task.title
+    return `${task.title} (complete)`
   },
 
   incomplete: function(task) {
-    return task.title
+    return `${task.title} (incomplete)`
   }
 }
 
